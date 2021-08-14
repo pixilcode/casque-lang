@@ -1,0 +1,47 @@
+# program
+
+program -> supercombinator
+
+# decl
+
+supercombinator -> type_decl newline super_decl
+
+type_decl -> ident '::' ('(' type (',' type)* ')' '->')? type
+
+super_decl -> ident ('(' ident (',' ident)* ')')? '=' expr
+
+# expr
+
+expr -> ternary
+
+ternary -> logic_or ('?' logic_or (':'|'else') logic_or)?
+
+logic_or -> logic_and ('||' logic_and)?
+
+logic_and -> bit_or ('&&' bit_or)?
+
+bit_or -> bit_xor ('|' bit_xor)?
+
+bit_xor -> bit_and ('^' bit_and)?
+
+bit_and -> equality ('&' equality)?
+
+equality -> relation (('==' | '!=') relation)?
+
+relation -> shift (('>' | '<' | '>=' | '<=') shift)?
+
+shift -> add (('>>' | '<<') add)?
+
+add -> mult (('+' | '-') mult)?
+
+mult -> unary (('*' | '/' | '%') unary)?
+
+unary -> ('+' | '-' | '!' | '~')? atomic
+
+atomic -> fn_call | grouping | variable | number | character | bool
+
+# helper
+
+type -> [A-Za-z_]+
+
+ident -> [A-Za-z_][A-Za-z0-9_]*
