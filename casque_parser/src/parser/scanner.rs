@@ -1,9 +1,31 @@
 use crate::parser::{Input, ScannerResult};
 use nom::bytes::complete::tag;
 
+pub fn variable(input: Input) -> ScannerResult<Input> {
+	Ok(("", ""))
+}
+
+#[cfg(test)]
+mod tests {
+	use super::*;
+
+	parser_tests! {
+		variable_test: variable {
+			"abc" => Ok(("", "abc"));
+			"a_b_c" => Ok(("", "a_b_c"));
+			"abc_123" => Ok(("", "abc_123"));
+			"_abc" => Ok(("", "_abc"));
+			"123abc" => Err(nom::Err::Error(nom::error::Error {
+				input: "123abc",
+				code: nom::error::ErrorKind::OneOf
+			}))
+		}
+	}
+}
+
 macro_rules! simple_token {
     ($name:ident $lexeme:expr) => {
-        pub fn $name(input: Input) -> ScannerResult<&str> {
+        pub fn $name(input: Input) -> ScannerResult<Input> {
             tag($lexeme)(input)
         }
     };
