@@ -14,7 +14,7 @@ super_decl -> ident ('(' ident (',' ident)* ')')? '=' expr
 
 expr -> ternary
 
-ternary -> logic_or ('?' logic_or (':'|'else') logic_or)?
+ternary -> logic_or ('?' logic_or ':' logic_or)?
 
 logic_or -> logic_and ('||' logic_and)?
 

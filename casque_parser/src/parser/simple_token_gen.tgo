@@ -1,0 +1,68 @@
+main = generateFrom (
+	["colon", ":"],
+	["double_colon", "::"],
+	["open_paren", "("],
+	["close_paren", ")"],
+	["comma", ","],
+	["arrow", "->"],
+	["eq", "="],
+	["q_mark", "?"],
+	["double_bar", "||"],
+	["double_amp", "&&"],
+	["bar", "|"],
+	["carot", "^"],
+	["amp", "&"],
+	["double_eq", "=="],
+	["bang_eq", "!="],
+	["gt", ">"],
+	["lt", "<"],
+	["gt_eq", ">="],
+	["lt_eq", "<="],
+	["double_gt", ">>"],
+	["double_lt", "<<"],
+	["plus", "+"],
+	["minus", "-"],
+	["star", "*"],
+	["slash", "/"],
+	["percent", "%"],
+	["bang", "!"],
+	["tilde", "~"]
+)
+
+generateFrom tokens =
+	newline ,,
+	generateParserFrom tokens ,,
+	newline ,,
+	generateTestsFrom tokens
+
+generateParserFrom tokens =
+	match tokens to
+	| () -> ""
+	| [tokenName, lexeme], tokens -> 
+		"simple_token!(" ,, tokenName ,, " " ,, (quoted lexeme) ,, ");" ,,
+		newline ,, (generateParserFrom tokens)
+
+generateTestsFrom tokens =
+	"#[cfg(test)]" ,, newline ,,
+	"mod simple_tests {" ,, newline ,,
+	tab ,, "use super::*;" ,, newline ,,
+	newline ,,
+	tab ,, "parser_tests! {" ,, newline ,,
+	generateTestsFrom' tokens ,,
+	tab ,, "}" ,, newline ,,
+	"}" ,, newline
+
+generateTestsFrom' tokens =
+	match tokens to
+	| () -> ""
+	| [tokenName, lexeme], tokens ->
+		tab ,, tab ,, tokenName ,, "_test: " ,, tokenName ,,
+		" { " ,, (quoted lexeme) ,, " => Ok((" ,, quote ,, quote ,, ", " ,, (quoted lexeme) ,, ")) }" ,,
+		newline ,, (generateTestsFrom' tokens)
+
+quoted lexeme = quote ,, lexeme ,, quote
+
+quote = '"'
+tab = '	'
+newline = '
+'
