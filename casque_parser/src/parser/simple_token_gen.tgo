@@ -57,7 +57,7 @@ generateTestsFrom' tokens =
 	| () -> ""
 	| [tokenName, lexeme], tokens ->
 		tab ,, tab ,, tokenName ,, "_test: " ,, tokenName ,,
-		" { " ,, (quoted lexeme) ,, " => Ok((" ,, quote ,, quote ,, ", " ,, (quoted lexeme) ,, ")) }" ,,
+		" { " ,, (quoted lexeme) ,, " => Ok((" ,, quote ,, quote ,, ", " ,, (quoted lexeme) ,, ")); }" ,,
 		newline ,, (generateTestsFrom' tokens)
 
 quoted lexeme = quote ,, lexeme ,, quote

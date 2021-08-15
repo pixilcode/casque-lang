@@ -1,6 +1,6 @@
 #[macro_use]
 macro_rules! parser_tests {
-	( $( $test_name:ident : $parser:ident { $( $input:expr => $output:expr );* } )* ) => {
+	( $( $test_name:ident : $parser:ident { $( $input:expr => $output:expr ; )* } )* ) => {
 		$(
 			#[test]
 			fn $test_name() {

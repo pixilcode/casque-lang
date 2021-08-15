@@ -2,25 +2,25 @@ use crate::parser::{Input, ScannerResult};
 use nom::bytes::complete::tag;
 
 pub fn variable(input: Input) -> ScannerResult<Input> {
-	Ok(("", ""))
+    Ok(("", ""))
 }
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+    use super::*;
 
-	parser_tests! {
-		variable_test: variable {
-			"abc" => Ok(("", "abc"));
-			"a_b_c" => Ok(("", "a_b_c"));
-			"abc_123" => Ok(("", "abc_123"));
-			"_abc" => Ok(("", "_abc"));
-			"123abc" => Err(nom::Err::Error(nom::error::Error {
-				input: "123abc",
-				code: nom::error::ErrorKind::OneOf
-			}))
-		}
-	}
+    parser_tests! {
+        variable_test: variable {
+            "abc" => Ok(("", "abc"));
+            "a_b_c" => Ok(("", "a_b_c"));
+            "abc_123" => Ok(("", "abc_123"));
+            "_abc" => Ok(("", "_abc"));
+            "123abc" => Err(nom::Err::Error(nom::error::Error {
+                input: "123abc",
+                code: nom::error::ErrorKind::OneOf
+            }));
+        }
+    }
 }
 
 macro_rules! simple_token {
@@ -66,33 +66,33 @@ mod simple_tests {
     use super::*;
 
     parser_tests! {
-            colon_test: colon { ":" => Ok(("", ":")) }
-            double_colon_test: double_colon { "::" => Ok(("", "::")) }
-            open_paren_test: open_paren { "(" => Ok(("", "(")) }
-            close_paren_test: close_paren { ")" => Ok(("", ")")) }
-            comma_test: comma { "," => Ok(("", ",")) }
-            arrow_test: arrow { "->" => Ok(("", "->")) }
-            eq_test: eq { "=" => Ok(("", "=")) }
-            q_mark_test: q_mark { "?" => Ok(("", "?")) }
-            double_bar_test: double_bar { "||" => Ok(("", "||")) }
-            double_amp_test: double_amp { "&&" => Ok(("", "&&")) }
-            bar_test: bar { "|" => Ok(("", "|")) }
-            carot_test: carot { "^" => Ok(("", "^")) }
-            amp_test: amp { "&" => Ok(("", "&")) }
-            double_eq_test: double_eq { "==" => Ok(("", "==")) }
-            bang_eq_test: bang_eq { "!=" => Ok(("", "!=")) }
-            gt_test: gt { ">" => Ok(("", ">")) }
-            lt_test: lt { "<" => Ok(("", "<")) }
-            gt_eq_test: gt_eq { ">=" => Ok(("", ">=")) }
-            lt_eq_test: lt_eq { "<=" => Ok(("", "<=")) }
-            double_gt_test: double_gt { ">>" => Ok(("", ">>")) }
-            double_lt_test: double_lt { "<<" => Ok(("", "<<")) }
-            plus_test: plus { "+" => Ok(("", "+")) }
-            minus_test: minus { "-" => Ok(("", "-")) }
-            star_test: star { "*" => Ok(("", "*")) }
-            slash_test: slash { "/" => Ok(("", "/")) }
-            percent_test: percent { "%" => Ok(("", "%")) }
-            bang_test: bang { "!" => Ok(("", "!")) }
-            tilde_test: tilde { "~" => Ok(("", "~")) }
+            colon_test: colon { ":" => Ok(("", ":")); }
+            double_colon_test: double_colon { "::" => Ok(("", "::")); }
+            open_paren_test: open_paren { "(" => Ok(("", "(")); }
+            close_paren_test: close_paren { ")" => Ok(("", ")")); }
+            comma_test: comma { "," => Ok(("", ",")); }
+            arrow_test: arrow { "->" => Ok(("", "->")); }
+            eq_test: eq { "=" => Ok(("", "=")); }
+            q_mark_test: q_mark { "?" => Ok(("", "?")); }
+            double_bar_test: double_bar { "||" => Ok(("", "||")); }
+            double_amp_test: double_amp { "&&" => Ok(("", "&&")); }
+            bar_test: bar { "|" => Ok(("", "|")); }
+            carot_test: carot { "^" => Ok(("", "^")); }
+            amp_test: amp { "&" => Ok(("", "&")); }
+            double_eq_test: double_eq { "==" => Ok(("", "==")); }
+            bang_eq_test: bang_eq { "!=" => Ok(("", "!=")); }
+            gt_test: gt { ">" => Ok(("", ">")); }
+            lt_test: lt { "<" => Ok(("", "<")); }
+            gt_eq_test: gt_eq { ">=" => Ok(("", ">=")); }
+            lt_eq_test: lt_eq { "<=" => Ok(("", "<=")); }
+            double_gt_test: double_gt { ">>" => Ok(("", ">>")); }
+            double_lt_test: double_lt { "<<" => Ok(("", "<<")); }
+            plus_test: plus { "+" => Ok(("", "+")); }
+            minus_test: minus { "-" => Ok(("", "-")); }
+            star_test: star { "*" => Ok(("", "*")); }
+            slash_test: slash { "/" => Ok(("", "/")); }
+            percent_test: percent { "%" => Ok(("", "%")); }
+            bang_test: bang { "!" => Ok(("", "!")); }
+            tilde_test: tilde { "~" => Ok(("", "~")); }
     }
 }
