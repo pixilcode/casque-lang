@@ -1,7 +1,19 @@
 use crate::parser::{Input, ScannerResult};
 use nom::bytes::complete::tag;
 
-pub fn variable(input: Input) -> ScannerResult<Input> {
+pub fn ident(input: Input) -> ScannerResult<Input> {
+    Ok(("", ""))
+}
+
+pub fn number(input: Input) -> ScannerResult<Input> {
+    Ok(("", ""))
+}
+
+pub fn character(input: Input) -> ScannerResult<Input> {
+    Ok(("", ""))
+}
+
+pub fn boolean(input: Input) -> ScannerResult<Input> {
     Ok(("", ""))
 }
 
@@ -10,7 +22,7 @@ mod tests {
     use super::*;
 
     parser_tests! {
-        variable_test: variable {
+        variable_test: ident {
             "abc" => Ok(("", "abc"));
             "a_b_c" => Ok(("", "a_b_c"));
             "abc_123" => Ok(("", "abc_123"));
@@ -20,6 +32,33 @@ mod tests {
                 code: nom::error::ErrorKind::OneOf
             }));
         }
+
+		number_test: number {
+			"123" => Ok(("", "123"));
+			"12_345" => Ok(("", "12_345"));
+			"12a" => Ok(("a", "12"));
+			"a12" => Err(nom::Err::Error(nom::error::Error {
+				input: "a12",
+				code: nom::error::ErrorKind::Alt
+			}));
+		}
+
+		character_test: character {
+			"'a'" => Ok(("", "a"));
+			"'\\n'" => Ok(("", "\n"));
+			"\"a\"" => Err(nom::Err::Error(nom::error::Error {
+				input: "\"a\"",
+				code: nom::error::ErrorKind::Tag
+			}));
+		}
+
+		bool_test: boolean {
+			"true" => Ok(("", "true"));
+			"false" => Ok(("", "false"));
+		}
+
+		// Ensure that keywords aren't parsed as identifiers
+		keyword_test: ident {}
     }
 }
 
