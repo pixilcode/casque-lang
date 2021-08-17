@@ -1,36 +1,61 @@
 use crate::parser::{Input, ScannerResult};
-use nom::bytes::complete::tag;
+use nom::{
+    bytes::complete::tag,
+    branch::alt,
+    character::complete::{alpha1, alphanumeric1, char, digit1, none_of, one_of},
+    combinator::{recognize, verify},
+    multi::many0,
+    sequence::{preceded, delimited}
+};
+
+const KEYWORDS: &[&str; 2] = &["true", "false"];
 
 pub fn ident(input: Input) -> ScannerResult<Input> {
-    Ok(("", ""))
+    verify(
+        recognize(
+            preceded(
+                alt((alpha1, tag("_"))),
+                many0(alt((alphanumeric1, tag("_"))))
+            )
+        ),
+        |ident: &str| !KEYWORDS.iter().any(|kw| &ident == kw)
+    )(input)
 }
 
 pub fn number(input: Input) -> ScannerResult<Input> {
-    Ok(("", ""))
+    recognize(
+        preceded(digit1, many0(alt((tag("_"), digit1))))
+    )(input)
 }
 
 pub fn character(input: Input) -> ScannerResult<Input> {
-    Ok(("", ""))
+    delimited(
+        char('\''),
+        alt((
+            recognize(preceded(char('\\'), one_of("nt\\'"))),
+            // or just any single character
+            recognize(none_of("\\'"))
+        )),
+        char('\'')
+    )(input)
 }
 
 pub fn boolean(input: Input) -> ScannerResult<Input> {
-    Ok(("", ""))
+    alt((tag("true"), tag("false")))(input)
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::parser::nom_error;
 
     parser_tests! {
-        variable_test: ident {
+        ident_test: ident {
             "abc" => Ok(("", "abc"));
             "a_b_c" => Ok(("", "a_b_c"));
             "abc_123" => Ok(("", "abc_123"));
             "_abc" => Ok(("", "_abc"));
-            "123abc" => Err(nom::Err::Error(nom::error::Error {
-                input: "123abc",
-                code: nom::error::ErrorKind::OneOf
-            }));
+            "123abc" => nom_error("123abc", nom::error::ErrorKind::Tag);
         }
 
 		number_test: number {
@@ -39,17 +64,14 @@ mod tests {
 			"12a" => Ok(("a", "12"));
 			"a12" => Err(nom::Err::Error(nom::error::Error {
 				input: "a12",
-				code: nom::error::ErrorKind::Alt
+				code: nom::error::ErrorKind::Digit
 			}));
 		}
 
 		character_test: character {
 			"'a'" => Ok(("", "a"));
-			"'\\n'" => Ok(("", "\n"));
-			"\"a\"" => Err(nom::Err::Error(nom::error::Error {
-				input: "\"a\"",
-				code: nom::error::ErrorKind::Tag
-			}));
+			"'\\n'" => Ok(("", "\\n"));
+			"\"a\"" => nom_error("\"a\"", nom::error::ErrorKind::Char);
 		}
 
 		bool_test: boolean {
@@ -58,7 +80,10 @@ mod tests {
 		}
 
 		// Ensure that keywords aren't parsed as identifiers
-		keyword_test: ident {}
+		keyword_test: ident {
+            "true" => nom_error("true", nom::error::ErrorKind::Verify);
+            "false" => nom_error("false", nom::error::ErrorKind::Verify);
+        }
     }
 }
 
