@@ -10,9 +10,9 @@ macro_rules! parser_tests {
 }
 
 type Input<'a> = &'a str;
-type ScannerResult<'a, O> = nom::IResult<Input<'a>, O>;
+type ParserResult<'a, O> = nom::IResult<Input<'a>, O>;
 
-fn nom_error<O>(input: &str, code: nom::error::ErrorKind) -> ScannerResult<O> {
+fn nom_error<O>(input: &str, code: nom::error::ErrorKind) -> ParserResult<O> {
 	Err(nom::Err::Error(nom::error::Error {
 		input,
 		code

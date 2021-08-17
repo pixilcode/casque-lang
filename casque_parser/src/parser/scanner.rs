@@ -1,4 +1,4 @@
-use crate::parser::{Input, ScannerResult};
+use crate::parser::{Input, ParserResult};
 use nom::{
     bytes::complete::tag,
     branch::alt,
@@ -10,7 +10,7 @@ use nom::{
 
 const KEYWORDS: &[&str; 2] = &["true", "false"];
 
-pub fn ident(input: Input) -> ScannerResult<Input> {
+pub fn ident(input: Input) -> ParserResult<Input> {
     verify(
         recognize(
             preceded(
@@ -22,13 +22,13 @@ pub fn ident(input: Input) -> ScannerResult<Input> {
     )(input)
 }
 
-pub fn number(input: Input) -> ScannerResult<Input> {
+pub fn number(input: Input) -> ParserResult<Input> {
     recognize(
         preceded(digit1, many0(alt((tag("_"), digit1))))
     )(input)
 }
 
-pub fn character(input: Input) -> ScannerResult<Input> {
+pub fn character(input: Input) -> ParserResult<Input> {
     delimited(
         char('\''),
         alt((
@@ -40,7 +40,7 @@ pub fn character(input: Input) -> ScannerResult<Input> {
     )(input)
 }
 
-pub fn boolean(input: Input) -> ScannerResult<Input> {
+pub fn boolean(input: Input) -> ParserResult<Input> {
     alt((tag("true"), tag("false")))(input)
 }
 
@@ -71,6 +71,9 @@ mod tests {
 		character_test: character {
 			"'a'" => Ok(("", "a"));
 			"'\\n'" => Ok(("", "\\n"));
+            "'\\t'" => Ok(("", "\\t"));
+            "'\\''" => Ok(("", "\\'"));
+            "'\\\\'" => Ok(("", "\\\\"));
 			"\"a\"" => nom_error("\"a\"", nom::error::ErrorKind::Char);
 		}
 
@@ -89,7 +92,7 @@ mod tests {
 
 macro_rules! simple_token {
     ($name:ident $lexeme:expr) => {
-        pub fn $name(input: Input) -> ScannerResult<Input> {
+        pub fn $name(input: Input) -> ParserResult<Input> {
             tag($lexeme)(input)
         }
     };
