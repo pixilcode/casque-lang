@@ -44,6 +44,7 @@ fn atomic(input: Input) -> ParserResult<Expr> {
 }
 
 mod tests {
+	#![allow(unused_imports)]
 	use super::*;
 	use crate::ast::Expr;
 
