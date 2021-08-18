@@ -20,3 +20,4 @@ fn nom_error<O>(input: &str, code: nom::error::ErrorKind) -> ParserResult<O> {
 }
 
 mod scanner;
+mod expr;
